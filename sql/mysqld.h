@@ -841,6 +841,7 @@ extern mysql_mutex_t LOCK_keyring_operations;
 
 extern char *opt_ssl_ca, *opt_ssl_capath, *opt_ssl_cert, *opt_ssl_cipher,
             *opt_ssl_key, *opt_ssl_crl, *opt_ssl_crlpath, *opt_tls_version;
+extern my_bool ssl_announce;
 
 
 extern char *opt_disabled_storage_engines;

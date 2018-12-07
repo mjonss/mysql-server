@@ -3943,6 +3943,13 @@ static Sys_var_charptr Sys_ssl_crlpath(
        READ_ONLY GLOBAL_VAR(opt_ssl_crlpath), SSL_OPT(OPT_SSL_CRLPATH),
        IN_FS_CHARSET, DEFAULT(0));
 
+static Sys_var_mybool Sys_ssl_announce(
+       "ssl_announce",
+       "Announce support for ssl (CLIENT_SSL flag, implies --ssl). "
+       "If OFF then new connections cannot use SSL.",
+       GLOBAL_VAR(ssl_announce), CMD_LINE(OPT_ARG),
+       DEFAULT(TRUE));
+
 #if defined(HAVE_OPENSSL) && !defined(HAVE_YASSL)
 static Sys_var_mybool Sys_auto_generate_certs(
        "auto_generate_certs",

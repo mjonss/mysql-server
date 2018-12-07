@@ -59,6 +59,70 @@ SELECT 1;
 connection default;
 disconnect ssl_con;
 
+--echo #
+--echo # Bug#89789: Option to disable SSL/TLS on running server
+--echo #
+connect (ssl_con,localhost,root,,,,,SSL);
+
+# Check ssl turned on
+--replace_result ECDHE-RSA-AES128-GCM-SHA256 SSL_CIPHER DHE-RSA-AES128-GCM-SHA256 SSL_CIPHER DHE-RSA-AES256-SHA SSL_CIPHER
+SHOW STATUS LIKE 'Ssl_cipher';
+
+SELECT @@global.ssl_announce;
+SET @@global.ssl_announce = 0;
+SELECT @@global.ssl_announce;
+
+disconnect ssl_con;
+
+--error 2026
+connect (ssl_con,localhost,root,,,,,SSL);
+
+--echo # ssl_con wihtout SSL
+connect (ssl_con,localhost,root);
+
+# Check ssl turned off
+--replace_result ECDHE-RSA-AES128-GCM-SHA256 SSL_CIPHER DHE-RSA-AES128-GCM-SHA256 SSL_CIPHER DHE-RSA-AES256-SHA SSL_CIPHER
+SHOW STATUS LIKE 'Ssl_cipher';
+
+SELECT @@global.ssl_announce;
+SELECT @@ssl_announce;
+--error ER_INCORRECT_GLOBAL_LOCAL_VAR
+SELECT @@session.ssl_announce;
+--error ER_GLOBAL_VARIABLE
+SET ssl_announce = 0;
+SET @@global.ssl_announce = 0;
+--error ER_GLOBAL_VARIABLE
+SET @@session.ssl_announce = 0;
+--error ER_WRONG_VALUE_FOR_VAR
+SET @@global.ssl_announce = 'a';
+SET @@global.ssl_announce = OFF;
+SELECT @@global.ssl_announce;
+SET @@global.ssl_announce = ON;
+SELECT @@global.ssl_announce;
+SET @@global.ssl_announce = 'OFF';
+SELECT @@global.ssl_announce;
+SET @@global.ssl_announce = 'ON';
+SELECT @@global.ssl_announce;
+--error ER_WRONG_VALUE_FOR_VAR
+SET @@global.ssl_announce = -1;
+--error ER_WRONG_VALUE_FOR_VAR
+SET @@global.ssl_announce = 2;
+SET @@global.ssl_announce = 1;
+SELECT @@global.ssl_announce;
+
+disconnect ssl_con;
+--echo # ssl_con wiht SSL
+connect (ssl_con,localhost,root,,,,,SSL);
+
+# Check ssl turned on
+--replace_result ECDHE-RSA-AES128-GCM-SHA256 SSL_CIPHER DHE-RSA-AES128-GCM-SHA256 SSL_CIPHER DHE-RSA-AES256-SHA SSL_CIPHER
+SHOW STATUS LIKE 'Ssl_cipher';
+
+SELECT @@global.ssl_announce;
+
+disconnect ssl_con;
+connection default;
+
 # Wait till all disconnects are completed
 --source include/wait_until_count_sessions.inc
 

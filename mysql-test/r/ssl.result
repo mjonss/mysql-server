@@ -2244,3 +2244,68 @@ SET @@SESSION.wait_timeout = 2;
 # CR_SERVER_LOST, CR_SERVER_GONE_ERROR
 SELECT 1;
 Got one of the listed errors
+#
+# Bug#89789: Option to disable SSL/TLS on running server
+#
+SHOW STATUS LIKE 'Ssl_cipher';
+Variable_name	Value
+Ssl_cipher	SSL_CIPHER
+SELECT @@global.ssl_announce;
+@@global.ssl_announce
+1
+SET @@global.ssl_announce = 0;
+SELECT @@global.ssl_announce;
+@@global.ssl_announce
+0
+connect(localhost,root,,test,13000,/Users/majonsson/open_source/mysql/mjonss-5.7-debug/mysql-test/var/tmp/mysqld.1.sock);
+ERROR HY000: SSL connection error: SSL is required but the server doesn't support it
+# ssl_con wihtout SSL
+SHOW STATUS LIKE 'Ssl_cipher';
+Variable_name	Value
+Ssl_cipher	
+SELECT @@global.ssl_announce;
+@@global.ssl_announce
+0
+SELECT @@ssl_announce;
+@@ssl_announce
+0
+SELECT @@session.ssl_announce;
+ERROR HY000: Variable 'ssl_announce' is a GLOBAL variable
+SET ssl_announce = 0;
+ERROR HY000: Variable 'ssl_announce' is a GLOBAL variable and should be set with SET GLOBAL
+SET @@global.ssl_announce = 0;
+SET @@session.ssl_announce = 0;
+ERROR HY000: Variable 'ssl_announce' is a GLOBAL variable and should be set with SET GLOBAL
+SET @@global.ssl_announce = 'a';
+ERROR 42000: Variable 'ssl_announce' can't be set to the value of 'a'
+SET @@global.ssl_announce = OFF;
+SELECT @@global.ssl_announce;
+@@global.ssl_announce
+0
+SET @@global.ssl_announce = ON;
+SELECT @@global.ssl_announce;
+@@global.ssl_announce
+1
+SET @@global.ssl_announce = 'OFF';
+SELECT @@global.ssl_announce;
+@@global.ssl_announce
+0
+SET @@global.ssl_announce = 'ON';
+SELECT @@global.ssl_announce;
+@@global.ssl_announce
+1
+SET @@global.ssl_announce = -1;
+ERROR 42000: Variable 'ssl_announce' can't be set to the value of '-1'
+SET @@global.ssl_announce = 2;
+ERROR 42000: Variable 'ssl_announce' can't be set to the value of '2'
+SET @@global.ssl_announce = 1;
+SELECT @@global.ssl_announce;
+@@global.ssl_announce
+1
+# ssl_con wiht SSL
+SHOW STATUS LIKE 'Ssl_cipher';
+Variable_name	Value
+Ssl_cipher	SSL_CIPHER
+SELECT @@global.ssl_announce;
+@@global.ssl_announce
+1

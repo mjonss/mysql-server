@@ -551,7 +551,7 @@ static bool send_server_handshake_packet(MPVIO_EXT *mpvio,
 
   protocol->add_client_capability(CAN_CLIENT_COMPRESS);
 
-  if (ssl_acceptor_fd)
+  if (ssl_acceptor_fd && ssl_announce)
   {
     protocol->add_client_capability(CLIENT_SSL);
     protocol->add_client_capability(CLIENT_SSL_VERIFY_SERVER_CERT);
@@ -1460,7 +1460,7 @@ skip_to_ssl:
 #endif
 
     /* Do the SSL layering. */
-    if (!ssl_acceptor_fd)
+    if (!ssl_acceptor_fd || !ssl_announce)
       return packet_error;
 
     DBUG_PRINT("info", ("IO layer change in progress..."));

@@ -865,6 +865,7 @@ my_bool opt_use_ssl= 1;
 char *opt_ssl_ca= NULL, *opt_ssl_capath= NULL, *opt_ssl_cert= NULL,
      *opt_ssl_cipher= NULL, *opt_ssl_key= NULL, *opt_ssl_crl= NULL,
      *opt_ssl_crlpath= NULL, *opt_tls_version= NULL;
+my_bool ssl_announce = 1; // Set CLIENT_SSL flag in handshake packet.
 
 #ifdef HAVE_OPENSSL
 char *des_key_file;
